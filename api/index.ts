@@ -76,11 +76,11 @@ app.get("/api/debug-db", async (req: Request, res: Response) => {
 });
 
 // Ruta GET: Sirve para LEER todas las frases
-app.get("/api/frases", async (req: Request, res: Response) => {
+app.get("/api/cervezas", async (req: Request, res: Response) => {
   try {
     await connectToMongo();
-    const frases = await Cerveza.find(); // Busca todas las frases en MongoDB
-    res.json(frases);
+    const cervezas = await Cerveza.find(); // Busca todas las frases en MongoDB
+    res.json(cervezas);
   } catch (error) {
     console.error("Error al leer frases:", error);
     res.status(500).json({
@@ -91,19 +91,19 @@ app.get("/api/frases", async (req: Request, res: Response) => {
 });
 
 // Ruta POST: Sirve para CREAR una nueva frase
-app.post("/api/frases", async (req: Request, res: Response) => {
+app.post("/api/cervezas", async (req: Request, res: Response) => {
   try {
-    const { texto, autor } = req.body;
+    const { marca, tipo, pais, grado_alcohol } = req.body;
 
-    if (!texto || !autor) {
-      res.status(400).json({ error: "Debes enviar texto y autor" });
+    if (!marca || !tipo || !pais || !grado_alcohol) {
+      res.status(400).json({ error: "Debes enviar marca, tipo, pais y grado_alcohol" });
       return;
     }
 
     await connectToMongo();
-    const nuevaFrase = new Cerveza({ texto, autor }); // Toma los datos que envía el usuario
-    await nuevaFrase.save(); // Los guarda en MongoDB
-    res.status(201).json(nuevaFrase); // Responde con la frase recién creada
+    const nuevaCerveza = new Cerveza({ marca, tipo, pais, grado_alcohol }); // Toma los datos que envía el usuario
+    await nuevaCerveza.save(); // Los guarda en MongoDB
+    res.status(201).json(nuevaCerveza); // Responde con la frase recién creada
   } catch (error) {
     console.error("Error al crear frase:", error);
     res.status(500).json({
