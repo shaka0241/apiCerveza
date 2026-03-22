@@ -112,6 +112,5 @@ app.post("/api/cervezas", async (req: Request, res: Response) => {
     });
   }
 });
-
 // 6. Exportamos la app para que Vercel pueda encenderla
 export default app;
