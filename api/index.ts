@@ -1,12 +1,14 @@
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
 // 1. Activamos las variables de entorno (nuestro archivo secreto)
 dotenv.config();
 
 // 2. Creamos la aplicación Express
 const app = express();
+app.use(cors()); // Permite peticiones desde el frontend
 app.use(express.json()); // Permite que nuestra API entienda formato JSON
 
 // 3. Conexión a MongoDB
