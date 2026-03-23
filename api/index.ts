@@ -37,7 +37,7 @@ async function connectToMongo() {
   console.log("¡Conectado a la Base de Datos!");
 }
 
-// 4. Creamos el "Molde" (Esquema) para nuestras frases
+// 4. Creamos el "Molde" (Esquema) para nuestras cervezas
 const CervezaSchema = new mongoose.Schema(
   {
     marca: String,
@@ -75,11 +75,11 @@ app.get("/api/debug-db", async (req: Request, res: Response) => {
   }
 });
 
-// Ruta GET: Sirve para LEER todas las frases
+// Ruta GET: Sirve para LEER todas las cervezas
 app.get("/api/cervezas", async (req: Request, res: Response) => {
   try {
     await connectToMongo();
-    const cervezas = await Cerveza.find(); // Busca todas las frases en MongoDB
+    const cervezas = await Cerveza.find(); // Busca todas las cervezas en MongoDB
     res.json(cervezas);
   } catch (error) {
     console.error("Error al leer frases:", error);
@@ -90,7 +90,7 @@ app.get("/api/cervezas", async (req: Request, res: Response) => {
   }
 });
 
-// Ruta POST: Sirve para CREAR una nueva frase
+// Ruta POST: Sirve para CREAR una nueva cerveza
 app.post("/api/cervezas", async (req: Request, res: Response) => {
   try {
     const { marca, tipo, pais, grado_alcohol } = req.body;
@@ -103,9 +103,9 @@ app.post("/api/cervezas", async (req: Request, res: Response) => {
     await connectToMongo();
     const nuevaCerveza = new Cerveza({ marca, tipo, pais, grado_alcohol }); // Toma los datos que envía el usuario
     await nuevaCerveza.save(); // Los guarda en MongoDB
-    res.status(201).json(nuevaCerveza); // Responde con la frase recién creada
+    res.status(201).json(nuevaCerveza); // Responde con la cerveza recién creada
   } catch (error) {
-    console.error("Error al crear frase:", error);
+    console.error("Error al crear cerveza:", error);
     res.status(500).json({
       error: "No se pudo guardar la frase",
       detail: error instanceof Error ? error.message : "Error desconocido",
