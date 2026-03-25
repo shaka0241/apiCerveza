@@ -28,9 +28,7 @@ async function connectToMongo() {
 
   // Si existe DB_NAME, forzamos ese nombre de base en la conexión.
   const dbNameFromEnv = process.env.DB_NAME;
-  const connectionOptions = dbNameFromEnv
-    ? { dbName: dbNameFromEnv }
-    : undefined;
+  const connectionOptions = dbNameFromEnv ? { dbName: dbNameFromEnv } : undefined;
 
   await mongoose.connect(mongoUriValidated, connectionOptions);
   currentDatabase = mongoose.connection.name;
@@ -114,5 +112,59 @@ app.post("/api/cervezas", async (req: Request, res: Response) => {
     });
   }
 });
+
+// Ruta PUT: Sirve para ACTUALIZAR una cerveza existente
+app.put("/api/cervezas/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { marca, tipo, pais, grado_alcohol } = req.body;
+
+    await connectToMongo();
+
+    const cervezaActualizada = await Cerveza.findByIdAndUpdate(
+      id,
+      { marca, tipo, pais, grado_alcohol },
+      { new: true } // Para que devuelva el documento actualizado
+    );
+
+    if (!cervezaActualizada) {
+      res.status(404).json({ error: "Cerveza no encontrada" });
+      return;
+    }
+
+    res.json(cervezaActualizada);
+  } catch (error) {
+    console.error("Error al actualizar cerveza:", error);
+    res.status(500).json({
+      error: "No se pudo actualizar la cerveza",
+      detail: error instanceof Error ? error.message : "Error desconocido",
+    });
+  }
+});
+
+// Ruta DELETE: Sirve para ELIMINAR una cerveza
+app.delete("/api/cervezas/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await connectToMongo();
+
+    const cervezaEliminada = await Cerveza.findByIdAndDelete(id);
+
+    if (!cervezaEliminada) {
+      res.status(404).json({ error: "Cerveza no encontrada" });
+      return;
+    }
+
+    res.json({ mensaje: "Cerveza eliminada correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar cerveza:", error);
+    res.status(500).json({
+      error: "No se pudo eliminar la cerveza",
+      detail: error instanceof Error ? error.message : "Error desconocido",
+    });
+  }
+});
+
 // 6. Exportamos la app para que Vercel pueda encenderla
 export default app;
